@@ -1,5 +1,6 @@
+import touhou.Player;
+
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
@@ -61,12 +62,13 @@ public class GameWindow extends JFrame{
 
             @Override
             public void keyPressed(KeyEvent keyEvent) {
-                canvas.keyPressed(keyEvent);
+
+                Player.keyPressed(keyEvent);
             }
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                canvas.keyReleased(keyEvent);
+                Player.keyReleased(keyEvent);
             }
         });
 
@@ -77,18 +79,14 @@ public class GameWindow extends JFrame{
 
     public void gameLoop(){
         while (true){
-                long currentTime = System.nanoTime();
+            long currentTime = System.nanoTime();
 
-                if (currentTime - lastTimeUpdate >= 17000000){
-                    canvas.run();
-                    canvas.mapRun();
-                    canvas.enemyRun();
-                    canvas.render();
-                    lastTimeUpdate = currentTime;
-                }
-
-
-
+            if (currentTime - lastTimeUpdate >= 17000000){
+                canvas.run();
+                canvas.mapRun();
+                canvas.render();
+                lastTimeUpdate = currentTime;
+            }
         }
     }
 }
