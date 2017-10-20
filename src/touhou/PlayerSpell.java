@@ -1,27 +1,17 @@
 package touhou;
 
+import Bases.GameObject;
 import Bases.Utils;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-
-public class PlayerSpell {
-    BufferedImage image;
-
-    public int bulletX;
-    public int bulletY;
+public class PlayerSpell extends GameObject {
     final int bulletSpeed = 10;
 
     public PlayerSpell(){
         image = Utils.loadImage("assets/images/player-bullets/a/1.png");
     }
 
-    public void render(Graphics graphics){
-        graphics.drawImage(image, bulletX, bulletY, null);
-    }
-
+    @Override
     public void run(){
-        bulletY -= bulletSpeed;
+        y -= bulletSpeed;
     }
 }

@@ -1,17 +1,17 @@
 package touhou;
 
+import Bases.GameObject;
 import Bases.Utils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class Enemy {
-    BufferedImage image;
-
-    public int enemyX = 180;
-    public int enemyY = 10;
+public class Enemy extends GameObject{
     public int enemyHeath = 1000;
+    int timeDisabled = 10;
+
+    boolean bulletDisabled;
 
     boolean isDeath = false;
 
@@ -20,26 +20,43 @@ public class Enemy {
     final int right = 375;
 
     public Enemy(){
+        x = 180;
+        y = 10;
         image = Utils.loadImage("assets/images/enemies/level0/black/0.png");
+
+        bulletDisabled = false;
     }
 
     public void render(Graphics graphics){
-        graphics.drawImage(image, enemyX, enemyY, null);
+        graphics.drawImage(image, (int)x, (int)y, null);
     }
 
     public void run(){
-        if (enemyX >= right - image.getWidth()|| enemyX <= left)
+        if (x >= right - image.getWidth()|| x <= left)
             speed = - speed;
-        enemyX -= speed;
-        enemyX = (int)Utils.clamp(enemyX,left,right);
+        x -= speed;
+        x = (int)Utils.clamp(x,left,right);
+        shoot();    
     }
 
-    public void shoot(ArrayList<EnemyBullet> enemyBullets){
+    int coolDownTime = 0;
+    public void shoot(){
+        if (bulletDisabled){
+            coolDownTime++;
+            if (coolDownTime >= timeDisabled){
+                bulletDisabled = false;
+                coolDownTime = 0;
+            }
+
+            return;
+        }
         if (!isDeath){
             EnemyBullet newSpell = new EnemyBullet();
-            newSpell.bulletX = enemyX;
-            newSpell.bulletY = enemyY;
-            enemyBullets.add(newSpell);
+            newSpell.x = (int)x;
+            newSpell.y = (int)y;
+            GameObject.add(newSpell);
+
+            bulletDisabled = true;
         }
     }
 }

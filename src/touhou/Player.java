@@ -1,23 +1,22 @@
 package touhou;
 
+import Bases.GameObject;
 import Bases.Utils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class Player {
-    BufferedImage image;
-    public int playerX = 182;
-    public int playerY = 518;
-
+public class Player extends GameObject{
     static boolean rightPressed;
     static boolean leftPressed;
     static boolean downPressed;
     static boolean upPressed;
 
     static boolean xPressed;
+
+    boolean spellDisabled;
+    final int coolDownTime = 10;
 
     final int speed = 5; // final = const
     final int left = 0;
@@ -26,11 +25,15 @@ public class Player {
     final int bottom = 518;
 
     public Player(){
+        x = 182;
+        y = 518;
         image = Utils.loadImage("assets/images/players/straight/0.png");
+
+        spellDisabled = false;
     }
 
     public void render(Graphics graphics){
-        graphics.drawImage(image, playerX, playerY, null);
+        graphics.drawImage(image, (int)x, (int)y, null);
     }
 
     public static void keyPressed(KeyEvent keyEvent) {
@@ -72,6 +75,11 @@ public class Player {
     }
 
     public void run(){
+        move();
+        shoot();
+    }
+
+    private void move() {
         int vx = 0;
         int vy = 0;
 
@@ -88,19 +96,32 @@ public class Player {
             vy +=speed;
         }
 
-        playerX += vx;
-        playerY += vy;
+        x += vx;
+        y += vy;
 
-        playerX = (int)Utils.clamp(playerX, left, right); // ép kiểu 1 số thì: (kiểu)
-        playerY = (int)Utils.clamp(playerY, top, bottom);
+        x = (int)Utils.clamp(x, left, right); // ép kiểu 1 số thì: (kiểu)
+        y = (int)Utils.clamp(y, top, bottom);
     }
 
-    public void shoot(ArrayList<PlayerSpell> spells){
+    int coolDownCount = 0;
+
+    public void shoot(){
+        if (spellDisabled){
+            coolDownCount++;
+            if (coolDownCount >= coolDownTime){
+                spellDisabled = false;
+                coolDownCount = 0;
+            }
+
+            return;
+        }
         if (xPressed) {
             PlayerSpell newSpell = new PlayerSpell();
-            newSpell.bulletX = playerX;
-            newSpell.bulletY = playerY;
-            spells.add(newSpell);
+            newSpell.x = (int)x;
+            newSpell.y = (int)y;
+            GameObject.add(newSpell);
+
+            spellDisabled = true;
         }
     }
 }
