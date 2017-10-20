@@ -36,7 +36,7 @@ public class Enemy extends GameObject{
             speed = - speed;
         x -= speed;
         x = (int)Utils.clamp(x,left,right);
-        shoot();    
+        shoot();
     }
 
     int coolDownTime = 0;
