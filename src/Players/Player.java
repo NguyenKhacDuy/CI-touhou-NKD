@@ -1,11 +1,12 @@
-package touhou;
+package Players;
 
 import Bases.GameObject;
+import Bases.Physics.BoxCollider;
 import Bases.Utils;
+import Bases.Vector2D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
 public class Player extends GameObject{
     static boolean rightPressed;
@@ -19,21 +20,18 @@ public class Player extends GameObject{
     final int coolDownTime = 10;
 
     final int speed = 5; // final = const
-    final int left = 0;
-    final int right = 356;
+    final int left = 20;
+    final int right = 370;
     final int top = 0;
     final int bottom = 518;
 
+    public BoxCollider boxCollider;
+
     public Player(){
-        x = 182;
-        y = 518;
+        position.set(182, 518);
         image = Utils.loadImage("assets/images/players/straight/0.png");
-
+        boxCollider = new BoxCollider(5,5);
         spellDisabled = false;
-    }
-
-    public void render(Graphics graphics){
-        graphics.drawImage(image, (int)x, (int)y, null);
     }
 
     public static void keyPressed(KeyEvent keyEvent) {
@@ -77,30 +75,32 @@ public class Player extends GameObject{
     public void run(){
         move();
         shoot();
+        boxCollider.posotion.set(this.position);
     }
 
+
+    Vector2D velocity = new Vector2D();
+
     private void move() {
-        int vx = 0;
-        int vy = 0;
+        velocity.set(0,0);
 
         if(rightPressed){
-            vx += speed;
+            velocity.x += speed;
         }
         if (leftPressed){
-            vx -= speed;
+            velocity.x -= speed;
         }
         if (upPressed){
-            vy -= speed;
+            velocity.y -= speed;
         }
         if (downPressed){
-            vy +=speed;
+            velocity.y +=speed;
         }
 
-        x += vx;
-        y += vy;
+        position.addUp(velocity);
 
-        x = (int)Utils.clamp(x, left, right); // ép kiểu 1 số thì: (kiểu)
-        y = (int)Utils.clamp(y, top, bottom);
+        position.x = (int)Utils.clamp(position.x, left, right); // ép kiểu 1 số thì: (kiểu)
+        position.y = (int)Utils.clamp(position.y, top, bottom);
     }
 
     int coolDownCount = 0;
@@ -117,11 +117,13 @@ public class Player extends GameObject{
         }
         if (xPressed) {
             PlayerSpell newSpell = new PlayerSpell();
-            newSpell.x = (int)x;
-            newSpell.y = (int)y;
+            newSpell.position.set(this.position.subtract(0, image.getHeight() / 2));
             GameObject.add(newSpell);
-
             spellDisabled = true;
         }
+    }
+
+    public void getHit() {
+        isActive = false;
     }
 }

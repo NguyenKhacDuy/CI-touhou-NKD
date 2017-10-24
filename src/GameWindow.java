@@ -1,4 +1,4 @@
-import touhou.Player;
+import Players.Player;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;

@@ -1,11 +1,10 @@
-package touhou;
+package Enemies;
 
 import Bases.GameObject;
+import Bases.Physics.BoxCollider;
 import Bases.Utils;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 public class Enemy extends GameObject{
     public int enemyHeath = 1000;
@@ -13,30 +12,30 @@ public class Enemy extends GameObject{
 
     boolean bulletDisabled;
 
-    boolean isDeath = false;
-
     int speed = 3; // final = const
-    final int left = 0;
-    final int right = 375;
+    final int left = 30;
+    final int right = 390;
+
+    public BoxCollider boxCollider;
 
     public Enemy(){
-        x = 180;
-        y = 10;
-        image = Utils.loadImage("assets/images/enemies/level0/black/0.png");
 
+        image = Utils.loadImage("assets/images/enemies/level0/black/0.png");
+        boxCollider = new BoxCollider(30,30);
         bulletDisabled = false;
     }
 
-    public void render(Graphics graphics){
-        graphics.drawImage(image, (int)x, (int)y, null);
+    public void run(){
+        move();
+        shoot();
+        position.addUp(0,2);
+//        position.x = (int)Utils.clamp(position.x,left,right);
+        boxCollider.posotion.set(this.position);
     }
 
-    public void run(){
-        if (x >= right - image.getWidth()|| x <= left)
+    public void move(){
+        if (position.x >= right - image.getWidth()|| position.x <= left)
             speed = - speed;
-        x -= speed;
-        x = (int)Utils.clamp(x,left,right);
-        shoot();
     }
 
     int coolDownTime = 0;
@@ -50,13 +49,16 @@ public class Enemy extends GameObject{
 
             return;
         }
-        if (!isDeath){
+
             EnemyBullet newSpell = new EnemyBullet();
-            newSpell.x = (int)x;
-            newSpell.y = (int)y;
+            newSpell.position.set(this.position);
             GameObject.add(newSpell);
 
             bulletDisabled = true;
-        }
+
+    }
+
+    public void getHit() {
+        isActive = false;
     }
 }

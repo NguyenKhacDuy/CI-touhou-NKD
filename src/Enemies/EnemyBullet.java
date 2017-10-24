@@ -1,4 +1,4 @@
-package touhou;
+package Enemies;
 
 import Bases.GameObject;
 import Bases.Utils;
@@ -11,11 +11,10 @@ public class EnemyBullet extends GameObject {
     final int bulletSpeed = 7;
 
     public EnemyBullet(){
-
         image = Utils.loadImage("assets/images/enemies/bullets/blue.png");
     }
 
     public void run (){
-        y += bulletSpeed;
+        position.y += bulletSpeed;
     }
 }
