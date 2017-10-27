@@ -20,7 +20,7 @@ public class EnemySpawner extends GameObject {
     public void spawn(){
         Enemy enemy = new Enemy();
         enemy.position.y = 10;
-        enemy.position.x = r.nextInt(384);
+        enemy.position.x = r.nextInt(360) + 21;
         GameObject.add(enemy);
     }
 }

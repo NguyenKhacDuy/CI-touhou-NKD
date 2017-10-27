@@ -2,80 +2,35 @@ package Players;
 
 import Bases.GameObject;
 import Bases.Physics.BoxCollider;
+import Bases.Physics.PhysicsBody;
 import Bases.Utils;
 import Bases.Vector2D;
+import Input.InputManage;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-
-public class Player extends GameObject{
-    static boolean rightPressed;
-    static boolean leftPressed;
-    static boolean downPressed;
-    static boolean upPressed;
-
-    static boolean xPressed;
-
-    boolean spellDisabled;
-    final int coolDownTime = 10;
-
+public class Player extends GameObject implements PhysicsBody {
     final int speed = 5; // final = const
     final int left = 20;
     final int right = 370;
-    final int top = 0;
-    final int bottom = 518;
+    final int top = 20;
+    final int bottom = 538;
 
     public BoxCollider boxCollider;
+    PlayerCastSpell playerCastSpell;
+    EnemyDamage enemyDamage;
 
     public Player(){
         position.set(182, 518);
         image = Utils.loadImage("assets/images/players/straight/0.png");
-        boxCollider = new BoxCollider(5,5);
-        spellDisabled = false;
-    }
+        boxCollider = new BoxCollider(30,30);
+        playerCastSpell = new PlayerCastSpell();
 
-    public static void keyPressed(KeyEvent keyEvent) {
-        if(keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
-            rightPressed = true;
-        }
-
-        if(keyEvent.getKeyCode() == KeyEvent.VK_LEFT){
-            leftPressed = true;
-        }
-        if (keyEvent.getKeyCode() == keyEvent.VK_UP){
-            upPressed = true;
-        }
-        if(keyEvent.getKeyCode() == keyEvent.VK_DOWN){
-            downPressed = true;
-        }
-        if (keyEvent.getKeyCode() == KeyEvent.VK_X){
-            xPressed = true;
-        }
-    }
-
-    public static void keyReleased(KeyEvent keyEvent) {
-        if(keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
-            rightPressed = false;
-        }
-
-        if(keyEvent.getKeyCode() == KeyEvent.VK_LEFT){
-            leftPressed = false;
-        }
-        if (keyEvent.getKeyCode() == keyEvent.VK_UP){
-            upPressed = false;
-        }
-        if(keyEvent.getKeyCode() == keyEvent.VK_DOWN){
-            downPressed = false;
-        }
-        if (keyEvent.getKeyCode() == KeyEvent.VK_X){
-            xPressed = false;
-        }
     }
 
     public void run(){
         move();
-        shoot();
-        boxCollider.posotion.set(this.position);
+        playerCastSpell.run(this);
+        boxCollider.position.set(this.position);
+//        this.enemyDamage.DamageofEnemy(this);
     }
 
 
@@ -83,17 +38,18 @@ public class Player extends GameObject{
 
     private void move() {
         velocity.set(0,0);
+        InputManage inputManage = InputManage.instance;
 
-        if(rightPressed){
+        if(inputManage.rightPressed){
             velocity.x += speed;
         }
-        if (leftPressed){
+        if (inputManage.leftPressed){
             velocity.x -= speed;
         }
-        if (upPressed){
+        if (inputManage.upPressed){
             velocity.y -= speed;
         }
-        if (downPressed){
+        if (inputManage.downPressed){
             velocity.y +=speed;
         }
 
@@ -103,27 +59,12 @@ public class Player extends GameObject{
         position.y = (int)Utils.clamp(position.y, top, bottom);
     }
 
-    int coolDownCount = 0;
-
-    public void shoot(){
-        if (spellDisabled){
-            coolDownCount++;
-            if (coolDownCount >= coolDownTime){
-                spellDisabled = false;
-                coolDownCount = 0;
-            }
-
-            return;
-        }
-        if (xPressed) {
-            PlayerSpell newSpell = new PlayerSpell();
-            newSpell.position.set(this.position.subtract(0, image.getHeight() / 2));
-            GameObject.add(newSpell);
-            spellDisabled = true;
-        }
-    }
-
     public void getHit() {
         isActive = false;
+    }
+
+    @Override
+    public BoxCollider getBoxCollider() {
+        return boxCollider;
     }
 }

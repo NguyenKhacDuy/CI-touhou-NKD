@@ -1,3 +1,4 @@
+import Input.InputManage;
 import Players.Player;
 
 import javax.swing.*;
@@ -63,12 +64,12 @@ public class GameWindow extends JFrame{
             @Override
             public void keyPressed(KeyEvent keyEvent) {
 
-                Player.keyPressed(keyEvent);
+                InputManage.instance.keyPressed(keyEvent);
             }
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                Player.keyReleased(keyEvent);
+                InputManage.instance.keyReleased(keyEvent);
             }
         });
 
